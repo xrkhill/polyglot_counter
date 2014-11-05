@@ -1,10 +1,12 @@
 #!/usr/bin/env ruby
 
+require 'fileutils'
+
 cmd = {
-  #js:  "node",
-  #php: "php",
-  #py:  "python3",
-  #rb:  "ruby",
+  js:  "#{ENV['HOME']}/.nvm/v0.11.13/bin/node",
+  php: "php",
+  py:  "python3",
+  rb:  "ruby",
   c:   "gcc",
   cpp: "g++"
 }
@@ -36,7 +38,8 @@ Dir["{C,c}ounter*.{java,#{cmd.keys.join(",")}}"].each do |file|
   puts "=" * run.length
 
   system version
-
   system "time #{command}"
   print "\n"
 end
+
+FileUtils.rm(["counter", "counter2", "Counter.class"])
