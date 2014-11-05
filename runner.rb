@@ -1,18 +1,21 @@
 #!/usr/bin/env ruby
 
-require 'fileutils'
+require "fileutils"
 
 cmd = {
-  js:  "#{ENV['HOME']}/.nvm/v0.11.13/bin/node",
-  php: "php",
-  py:  "python3",
-  rb:  "ruby",
+  js:  "node",
   c:   "gcc",
-  cpp: "g++"
+  cpp: "g++",
+  rb:  "ruby",
+  php: "php",
+  py:  "python3"
 }
 
 Dir["{C,c}ounter*.{java,#{cmd.keys.join(",")}}"].each do |file|
   name, ext = file.split(".")
+  prog = cmd[ext.to_sym]
+  version = "#{prog} --version"
+  command = "#{prog} #{file}"
 
   case ext
   when "java"
@@ -21,20 +24,17 @@ Dir["{C,c}ounter*.{java,#{cmd.keys.join(",")}}"].each do |file|
     version = "java -version"
     command = "java #{name}"
   when "c", "cpp"
-    prog = cmd[ext.to_sym]
-    version = "#{prog} --version"
     command = "./#{name}"
 
     system "#{prog} #{file} -o #{name}" # complile first
-  else
-    prog = cmd[ext.to_sym]
-    version = "#{prog} --version"
-    command = "#{prog} #{file}"
-
-    system "nvm use 0.11" if ext == "js"
   end
 
-  puts run = "Running: #{command}"
+  if ext == "c" || ext == "cpp"
+    puts run = "Running: #{name} (#{ext})"
+  else
+    puts run = "Running: #{command}"
+  end
+
   puts "=" * run.length
 
   system version
