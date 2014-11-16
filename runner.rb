@@ -6,6 +6,7 @@ cmd = {
   js:  "node",
   c:   "gcc",
   cpp: "g++",
+  go:  "go",
   rb:  "ruby",
   php: "php",
   py:  "python3"
@@ -24,12 +25,17 @@ Dir["{C,c}ounter*.{java,#{cmd.keys.join(",")}}"].each do |file|
     version = "java -version"
     command = "java #{name}"
   when "c", "cpp"
-    command = "./#{name}"
+    system "#{prog} #{file} -o #{name}" # compile first
 
-    system "#{prog} #{file} -o #{name}" # complile first
+    command = "./#{name}"
+  when "go"
+    system "#{prog} build -o #{name} #{file}" # compile first
+
+    version = "#{prog} version"
+    command = "./#{name}"
   end
 
-  if ext == "c" || ext == "cpp"
+  if %w(c cpp go).include?(ext)
     puts run = "Running: #{name} (#{ext})"
   else
     puts run = "Running: #{command}"
@@ -42,4 +48,4 @@ Dir["{C,c}ounter*.{java,#{cmd.keys.join(",")}}"].each do |file|
   print "\n"
 end
 
-FileUtils.rm(["counter", "counter2", "Counter.class"])
+FileUtils.rm(["counter", "counter2", "counter3", "Counter.class"])
